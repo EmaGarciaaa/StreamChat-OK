@@ -4,7 +4,7 @@ import { MessagePayload, AlertPayload, QuickAction } from "../types";
 
 const SOCKET_SERVER_URL = window.location.origin;
 
-export function useSocket(room: string, role: string, soundEnabled: boolean = false) {
+export function useSocket(room: string, role: string, soundEnabled: boolean = false, token: string = "") {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<MessagePayload[]>([]);
   const [onlineCount, setOnlineCount] = useState(0);
@@ -48,14 +48,24 @@ export function useSocket(room: string, role: string, soundEnabled: boolean = fa
   }, []);
 
   useEffect(() => {
-    if (!room || !role) return;
+    if (!room || !role || !token) return;
 
     const newSocket = io(SOCKET_SERVER_URL);
     socketRef.current = newSocket;
 
     newSocket.on("connect", () => {
-      newSocket.emit("join-room", { room, role });
+      newSocket.emit("join-room", { room, role, token });
       setSocket(newSocket);
+    });
+
+    newSocket.on("auth-invalid", () => {
+      window.alert("Sesión inválida para la sala. Acceso Denegado.");
+      sessionStorage.removeItem(`streamSync_token_${room}`);
+      window.location.href = "/";
+    });
+
+    newSocket.on("sync-history", (history: MessagePayload[]) => {
+      setMessages(history);
     });
 
     newSocket.on("users-update", (count: number) => {
