@@ -1,5 +1,5 @@
 import { useState, FormEvent } from "react";
-import { Shield, Plus, LogIn, ArrowRight } from "lucide-react";
+import { Plus, LogIn, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface AccessGateProps {
@@ -61,16 +61,19 @@ export function AccessGate({ onSuccess, t }: AccessGateProps) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white flex flex-col items-center justify-center p-4 font-sans selection:bg-neutral-800">
-      <div className="w-full max-w-md flex flex-col items-center animate-in fade-in zoom-in duration-500">
-        <div className="w-20 h-20 bg-neutral-900 rounded-3xl flex items-center justify-center mb-8 border border-neutral-800 shadow-2xl">
-          <Shield className="w-10 h-10 text-neutral-400" />
-        </div>
-        
+    <div className="relative min-h-screen bg-stream-dark overflow-hidden text-white flex flex-col items-center justify-center p-4 font-sans selection:bg-neutral-800">
+      {/* Background Blobs */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-stream-orange opacity-40 blur-3xl lg:blur-[120px] animate-blob-1"></div>
+        <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-stream-teal opacity-30 blur-3xl lg:blur-[120px] animate-blob-2"></div>
+        <div className="absolute bottom-[-20%] left-[15%] w-[60vw] h-[60vw] rounded-full bg-stream-orange opacity-20 blur-3xl lg:blur-[120px] animate-blob-3"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-md flex flex-col items-center animate-in fade-in zoom-in duration-500 bg-black/20 backdrop-blur-lg border border-stream-ash/30 rounded-3xl p-8 sm:p-10 shadow-2xl">
         <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-2 text-center">
-          StreamSync Gate
+          StreamChat
         </h1>
-        <p className="text-neutral-500 text-center mb-10 text-lg">
+        <p className="text-neutral-300 text-center mb-10 text-lg">
           Acceso seguro a salas de transmisión
         </p>
 
@@ -92,20 +95,20 @@ export function AccessGate({ onSuccess, t }: AccessGateProps) {
         )}
 
         {mode === "create" && createdRoomInfo && (
-          <div className="w-full bg-neutral-900 border border-neutral-800 p-8 rounded-2xl text-center space-y-6">
+          <div className="w-full bg-black/20 border border-stream-ash/20 p-8 rounded-2xl text-center space-y-6">
             <h2 className="text-white font-bold text-xl">Sala Creada con Éxito</h2>
-            <div className="space-y-4 text-left bg-neutral-950 p-6 rounded-xl border border-neutral-900">
+            <div className="space-y-4 text-left bg-black/40 p-6 rounded-xl border border-stream-ash/20">
               <div>
-                <p className="text-neutral-500 text-sm font-medium uppercase tracking-wider mb-1">ID de la Sala</p>
-                <p className="text-2xl font-mono text-white select-all">{createdRoomInfo.roomId}</p>
+                <p className="text-stream-ash text-sm font-medium uppercase tracking-wider mb-1">ID de la Sala</p>
+                <p className="text-2xl font-mono text-stream-cream select-all">{createdRoomInfo.roomId}</p>
               </div>
-              <div className="h-px w-full bg-neutral-800" />
+              <div className="h-px w-full bg-stream-ash/20" />
               <div>
-                <p className="text-neutral-500 text-sm font-medium uppercase tracking-wider mb-1">PIN de Acceso</p>
-                <p className="text-3xl font-mono text-green-500 font-bold tracking-[0.5em]">{createdRoomInfo.pin}</p>
+                <p className="text-stream-ash text-sm font-medium uppercase tracking-wider mb-1">PIN de Acceso</p>
+                <p className="text-3xl font-mono text-stream-teal font-bold tracking-[0.5em]">{createdRoomInfo.pin}</p>
               </div>
             </div>
-            <p className="text-neutral-400 text-sm">
+            <p className="text-stream-ash text-sm">
               Comparte este ID y PIN con tu equipo. Esta es la única forma de acceder a tu sala.
             </p>
             <Button 
@@ -120,21 +123,21 @@ export function AccessGate({ onSuccess, t }: AccessGateProps) {
         {mode === "join" && (
           <form onSubmit={handleJoin} className="w-full space-y-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2 uppercase tracking-wider">
+              <label className="block text-sm font-medium text-stream-ash mb-2 uppercase tracking-wider">
                 ID de la Sala
               </label>
               <input
                 type="text"
                 value={roomName}
                 onChange={(e) => { setError(null); setRoomName(e.target.value.toLowerCase().trim()); }}
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-4 text-lg outline-none focus:border-neutral-600 transition-colors placeholder:text-neutral-700"
+                className="w-full bg-black/40 border border-stream-ash/30 rounded-xl px-4 py-4 text-lg outline-none focus:border-stream-orange transition-colors placeholder:text-stream-ash/50 text-stream-cream"
                 placeholder="Ej. w2x9k"
                 disabled={isProcessing}
                 autoFocus
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2 uppercase tracking-wider">
+              <label className="block text-sm font-medium text-stream-ash mb-2 uppercase tracking-wider">
                 PIN de 4 dígitos
               </label>
               <input
@@ -147,7 +150,7 @@ export function AccessGate({ onSuccess, t }: AccessGateProps) {
                   setError(null);
                   setPin(e.target.value.replace(/[^0-9]/g, ''));
                 }}
-                className={`w-full bg-neutral-900 border ${error ? 'border-red-500' : 'border-neutral-800'} rounded-xl px-6 py-4 text-center text-4xl tracking-[1em] outline-none focus:border-neutral-600 transition-colors placeholder:text-neutral-800 font-mono`}
+                className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-stream-ash/30'} rounded-xl px-6 py-4 text-center text-4xl tracking-[1em] outline-none focus:border-stream-orange transition-colors placeholder:text-stream-ash/30 font-mono text-stream-teal`}
                 placeholder="••••"
                 disabled={isProcessing}
               />

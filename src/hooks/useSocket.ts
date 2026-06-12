@@ -124,5 +124,11 @@ export function useSocket(room: string, role: string, soundEnabled: boolean = fa
     }
   }, [room]);
 
-  return { messages, onlineCount, connectedUsers, alert, sharedActions, sendMessage, sendAlert, updateSharedSettings };
+  const disconnect = useCallback(() => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
+  }, []);
+
+  return { messages, onlineCount, connectedUsers, alert, sharedActions, sendMessage, sendAlert, updateSharedSettings, disconnect };
 }

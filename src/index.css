@@ -46,6 +46,35 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    
+    --color-stream-dark: #3E2922;
+    --color-stream-orange: #E57734;
+    --color-stream-cream: #F8EBCF;
+    --color-stream-salmon: #F6C0A6;
+    --color-stream-ash: #B6ACAD;
+    --color-stream-teal: #01757A;
+    
+    --animate-blob-1: blob-1 25s infinite ease-in-out alternate;
+    --animate-blob-2: blob-2 20s infinite ease-in-out alternate;
+    --animate-blob-3: blob-3 28s infinite ease-in-out alternate;
+
+    @keyframes blob-1 {
+      0% { transform: translate(0vw, 0vh) scale(1); }
+      33% { transform: translate(20vw, 15vh) scale(1.2); }
+      66% { transform: translate(-10vw, 10vh) scale(0.8); }
+      100% { transform: translate(0vw, 0vh) scale(1); }
+    }
+    @keyframes blob-2 {
+      0% { transform: translate(0vw, 0vh) scale(1); }
+      33% { transform: translate(-25vw, -10vh) scale(1.1); }
+      66% { transform: translate(15vw, -15vh) scale(0.9); }
+      100% { transform: translate(0vw, 0vh) scale(1); }
+    }
+    @keyframes blob-3 {
+      0% { transform: translate(0vw, 0vh) scale(1); }
+      50% { transform: translate(15vw, -20vh) scale(1.3); }
+      100% { transform: translate(0vw, 0vh) scale(1); }
+    }
 }
 
 :root {
