@@ -126,21 +126,20 @@ export function ChatDashboard({ role, roomName, language, setLanguage, t, token 
   };
 
   const MobileQuickActions = () => (
-    <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 p-4 lg:p-0">
-      <h3 className="lg:block hidden text-stream-ash font-medium mb-2">{t.quickActions}</h3>
+    <div className="grid grid-cols-1 gap-3 p-0">
       {quickActions.map((action) => {
-        const cMap = MESSAGE_COLORS[action.color || "neutral"];
+        const cMap = MESSAGE_COLORS[action.color || "neutral"] || MESSAGE_COLORS.neutral;
         return (
         <Button
           key={action.id}
           onClick={() => handleSendAlert(action.label, action.color)}
-          className={`h-16 lg:h-14 lg:justify-start w-full bg-black/20 border-2 ${cMap.border} hover:opacity-80 transition-opacity ${cMap.text}`}
+          className={`h-14 justify-start w-full bg-black/20 border-2 ${cMap.border} hover:opacity-80 transition-opacity ${cMap.text} font-bold rounded-xl`}
           variant="outline"
         >
-          <Zap className={`w-4 h-4 mr-2 ${cMap.text}`} />
-          {getTranslatedText(action.label)}
+          <Zap className={`w-4 h-4 mr-2 shrink-0 ${cMap.text}`} />
+          <span className="truncate pr-1">{getTranslatedText(action.label)}</span>
           {action.shortcut && (
-            <span className="hidden lg:inline-block ml-auto text-xs uppercase opacity-70">[ {action.shortcut} ]</span>
+            <span className="hidden lg:inline-block ml-auto text-xs uppercase opacity-70 font-mono shrink-0">[ {action.shortcut} ]</span>
           )}
         </Button>
       )})}
@@ -220,6 +219,24 @@ export function ChatDashboard({ role, roomName, language, setLanguage, t, token 
             <LogOut className="w-5 h-5" />
           </Button>
 
+          {/* Quick Actions Trigger for Mobile */}
+          <Sheet>
+            <SheetTrigger render={<Button variant="outline" size="icon" className="lg:hidden border-stream-ash/20 bg-black/20 text-stream-orange-400 hover:text-stream-orange" />}>
+              <Zap className="w-5 h-5" />
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] bg-stream-dark border-l border-stream-ash/20 text-stream-cream p-0 flex flex-col">
+              <div className="p-4 border-b border-stream-ash/20 flex flex-col">
+                <h2 className="font-bold text-lg flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-stream-orange animate-pulse" /> {t.quickActions || "Alertas Rápidas"}
+                </h2>
+              </div>
+              <div className="p-4 flex-1 overflow-y-auto">
+                <MobileQuickActions />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* Connected Users Trigger for Mobile */}
           <Sheet>
             <SheetTrigger render={<Button variant="outline" size="icon" className="lg:hidden border-stream-ash/20 bg-black/20" />}>
               <Menu className="w-5 h-5 text-stream-ash" />
@@ -337,30 +354,34 @@ export function ChatDashboard({ role, roomName, language, setLanguage, t, token 
           </div>
 
           {/* Input Area */}
-          <div className="p-4 lg:p-6 bg-black/10 border-t border-stream-ash/20">
-            <form onSubmit={handleSendMessage} className="flex gap-2 lg:gap-4 max-w-5xl mx-auto">
+          <div className="p-3 sm:p-4 lg:p-6 bg-black/10 border-t border-stream-ash/20">
+            <form onSubmit={handleSendMessage} className="flex gap-2 lg:gap-4 max-w-5xl mx-auto w-full">
               <input
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder={t.typeMessage}
-                className="flex-1 rounded-2xl bg-black/40 border border-stream-ash/30 px-6 py-4 lg:text-2xl outline-none focus:border-stream-orange transition-colors placeholder:text-stream-ash"
+                className="flex-1 rounded-xl sm:rounded-2xl bg-black/40 border border-stream-ash/30 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg lg:text-2xl outline-none focus:border-stream-orange transition-colors placeholder:text-stream-ash"
               />
               <Button 
                 type="submit" 
                 size="icon"
                 disabled={!text.trim()}
-                className={`h-auto w-16 lg:w-20 rounded-2xl ${roleColor} hover:opacity-90 disabled:opacity-50 disabled:bg-stream-dark disabled:border disabled:border-stream-ash/20 text-stream-cream`}
+                className={`h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-20 rounded-xl sm:rounded-2xl shrink-0 ${roleColor} hover:opacity-90 disabled:opacity-50 disabled:bg-stream-dark disabled:border disabled:border-stream-ash/20 text-stream-cream`}
               >
-                <Send className="w-6 h-6 lg:w-8 lg:h-8" />
+                <Send className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
               </Button>
             </form>
           </div>
         </div>
 
-        {/* Right / Bottom - Quick Actions */}
-        <div className="shrink-0 bg-black/10 lg:w-80 lg:border-l border-stream-ash/20 flex flex-col justify-end lg:justify-start overflow-y-auto max-h-[40vh] lg:max-h-none border-t lg:border-t-0 p-2 lg:p-6 pb-safe">
-           <MobileQuickActions />
+        {/* Right - Quick Actions */}
+        <div className="hidden lg:flex shrink-0 bg-black/10 lg:w-80 lg:border-l border-stream-ash/20 flex-col p-6 overflow-y-auto">
+          <h3 className="text-stream-ash font-semibold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-stream-orange" />
+            {t.quickActions || "Alertas Rápidas"}
+          </h3>
+          <MobileQuickActions />
         </div>
       </div>
     </div>

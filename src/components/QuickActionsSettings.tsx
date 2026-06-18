@@ -100,21 +100,21 @@ export function QuickActionsSettings({ actions, onSave, t }: QuickActionsSetting
           </div>
           
           {/* Main Grid Content */}
-          <div className="flex-1 px-6 lg:px-12 py-8 w-full max-w-7xl mx-auto space-y-6">
+          <div className="flex-1 px-4 sm:px-6 lg:px-12 py-8 w-full max-w-7xl mx-auto space-y-6">
             {localActions.map((action, idx) => {
               const currentColorDef = COLOR_PALETTE.find(c => c.value === (action.color || "neutral")) || COLOR_PALETTE[0];
               const isPickerOpen = activeColorPickerId === action.id;
 
               return (
-              <div key={action.id} className="flex flex-col xl:flex-row xl:items-center gap-4 lg:gap-6 bg-black/20 p-5 rounded-2xl border border-stream-ash/20 hover:border-stream-orange/30 transition-colors shadow-lg">
-                <div className="flex items-center gap-4 lg:gap-6 w-full">
-                  
-                  {/* Shortcut Indicator */}
-                  <div className="flex flex-col space-y-2 shrink-0">
-                    <label className="text-xs text-stream-ash uppercase tracking-wider font-semibold">ATAJO</label>
+              <div key={action.id} className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 bg-black/40 md:bg-black/20 p-5 rounded-2xl border border-stream-ash/20 hover:border-stream-orange/30 transition-colors shadow-lg">
+                
+                {/* Top row elements on Mobile (Shortcut indicator left, Delete cross right) */}
+                <div className="flex md:hidden items-center justify-between w-full border-b border-stream-ash/10 pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-stream-ash uppercase tracking-wider font-semibold">Atajo</span>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-stream-ash/50 font-mono text-lg">[</span>
+                      <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                        <span className="text-stream-ash/50 font-mono text-base">[</span>
                       </div>
                       <input
                         type="text"
@@ -122,40 +122,73 @@ export function QuickActionsSettings({ actions, onSave, t }: QuickActionsSetting
                         onChange={(e) => handleActionChange(action.id, "shortcut", e.target.value)}
                         placeholder="-"
                         maxLength={1}
-                        className="w-16 h-14 bg-black/50 border border-stream-ash/30 rounded-xl px-2 text-center text-xl outline-none focus:border-stream-orange focus:ring-1 focus:ring-stream-orange uppercase text-stream-teal font-bold transition-all"
+                        className="w-14 h-10 bg-black/50 border border-stream-ash/30 rounded-lg px-1 text-center text-base outline-none focus:border-stream-orange focus:ring-1 focus:ring-stream-orange uppercase text-stream-teal font-bold transition-all"
                       />
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-stream-ash/50 font-mono text-lg">]</span>
+                      <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <span className="text-stream-ash/50 font-mono text-base">]</span>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Action Label Input */}
-                  <div className="flex-1 flex flex-col space-y-2 min-w-[200px]">
-                    <label className="text-xs text-stream-ash uppercase tracking-wider font-semibold">TÍTULO DEL BOTÓN</label>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => handleRemoveAction(action.id)}
+                    className="text-stream-ash hover:bg-black/40 hover:text-red-400 h-10 w-10 rounded-xl transition-colors"
+                    title="Eliminar Acción"
+                  >
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {/* Desktop Shortcut display box (hidden on mobile) */}
+                <div className="hidden md:flex flex-col space-y-2 shrink-0">
+                  <label className="text-xs text-stream-ash uppercase tracking-wider font-semibold">ATAJO</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-stream-ash/50 font-mono text-lg">[</span>
+                    </div>
                     <input
                       type="text"
-                      value={getTranslatedText(action.label)}
-                      onChange={(e) => handleActionChange(action.id, "label", e.target.value)}
-                      placeholder={t.alertMessage}
-                      className="w-full bg-black/50 border border-stream-ash/30 rounded-xl px-6 h-14 text-lg lg:text-xl outline-none focus:border-stream-orange focus:ring-1 focus:ring-stream-orange text-stream-cream transition-all font-medium"
+                      value={action.shortcut}
+                      onChange={(e) => handleActionChange(action.id, "shortcut", e.target.value)}
+                      placeholder="-"
+                      maxLength={1}
+                      className="w-16 h-14 bg-black/50 border border-stream-ash/30 rounded-xl px-2 text-center text-xl outline-none focus:border-stream-orange focus:ring-1 focus:ring-stream-orange uppercase text-stream-teal font-bold transition-all"
                     />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span className="text-stream-ash/50 font-mono text-lg">]</span>
+                    </div>
                   </div>
+                </div>
 
-                  {/* Color Picker */}
-                  <div className="flex flex-col space-y-2 shrink-0">
-                    <label className="text-xs text-stream-ash uppercase tracking-wider font-semibold w-full text-center">COLOR</label>
+                {/* Wide friendly descriptive input box */}
+                <div className="flex-1 flex flex-col space-y-2 w-full">
+                  <label className="text-xs text-stream-ash uppercase tracking-wider font-semibold block">TÍTULO DEL BOTÓN</label>
+                  <input
+                    type="text"
+                    value={getTranslatedText(action.label)}
+                    onChange={(e) => handleActionChange(action.id, "label", e.target.value)}
+                    placeholder={t.alertMessage}
+                    className="w-full bg-black/50 border border-stream-ash/30 rounded-xl px-4 md:px-6 h-12 md:h-14 text-base md:text-lg lg:text-xl outline-none focus:border-stream-orange focus:ring-1 focus:ring-stream-orange text-stream-cream transition-all font-medium"
+                  />
+                </div>
+
+                {/* Color section selector and PC delete action button */}
+                <div className="flex items-center justify-between md:justify-start gap-4 md:gap-6 w-full md:w-auto shrink-0 mt-2 md:mt-0">
+                  <div className="flex items-center md:flex-col gap-3 md:gap-2 shrink-0 w-full md:w-auto justify-between">
+                    <label className="text-xs text-stream-ash uppercase tracking-wider font-semibold md:w-full md:text-center">COLOR</label>
                     <div className="relative flex justify-center">
                       <button
                         type="button"
                         onClick={() => setActiveColorPickerId(isPickerOpen ? null : action.id)}
-                        className={`w-14 h-14 rounded-full ${currentColorDef.bgClass} shadow-md border-2 ${isPickerOpen ? 'border-stream-cream scale-110' : 'border-stream-ash/50 hover:border-stream-cream hover:scale-105'} transition-all`}
+                        className={`w-10 h-10 md:w-14 md:h-14 rounded-full ${currentColorDef.bgClass} shadow-md border-2 ${isPickerOpen ? 'border-stream-cream scale-110' : 'border-stream-ash/50 hover:border-stream-cream hover:scale-105'} transition-all`}
                         title="Elegir Color"
                       />
                       {isPickerOpen && (
                         <>
                           <div className="fixed inset-0 z-40" onClick={() => setActiveColorPickerId(null)} />
-                          <div className={`absolute ${idx >= 2 && idx >= localActions.length - 2 ? 'bottom-16' : 'top-16'} right-0 xl:left-1/2 xl:-translate-x-1/2 z-50 w-72 lg:w-96 bg-stream-dark border-2 border-stream-ash/40 rounded-2xl p-4 shadow-[0_10px_50px_rgba(0,0,0,0.8)] grid grid-cols-4 lg:grid-cols-8 gap-3 animate-in fade-in zoom-in-95 duration-200`}>
+                          <div className={`absolute ${idx >= 2 && idx >= localActions.length - 2 ? 'bottom-12 md:bottom-16' : 'top-12 md:top-16'} right-0 xl:left-1/2 xl:-translate-x-1/2 z-50 w-72 lg:w-96 bg-stream-dark border-2 border-stream-ash/40 rounded-2xl p-4 shadow-[0_10px_50px_rgba(0,0,0,0.8)] grid grid-cols-4 lg:grid-cols-8 gap-3 animate-in fade-in zoom-in-95 duration-200`}>
                             {COLOR_PALETTE.map(color => (
                               <button
                                 key={color.value}
@@ -178,8 +211,8 @@ export function QuickActionsSettings({ actions, onSave, t }: QuickActionsSetting
                     </div>
                   </div>
 
-                  {/* Remove Button */}
-                  <div className="flex flex-col space-y-2 shrink-0 pt-6">
+                  {/* Remove Button for PC layout */}
+                  <div className="hidden md:flex flex-col space-y-2 shrink-0 pt-6">
                     <Button 
                       variant="ghost" 
                       size="icon" 
@@ -190,8 +223,8 @@ export function QuickActionsSettings({ actions, onSave, t }: QuickActionsSetting
                       <X className="w-8 h-8" />
                     </Button>
                   </div>
-
                 </div>
+
               </div>
             )})}
             
