@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { MessagePayload, AlertPayload, QuickAction } from "../types";
 
-const SOCKET_SERVER_URL = window.location.origin;
+const SOCKET_SERVER_URL = (typeof process !== "undefined" && (process as any).env?.NEXT_PUBLIC_WS_URL) || window.location.origin;
 
 export function useSocket(room: string, role: string, soundEnabled: boolean = false, token: string = "") {
   const [socket, setSocket] = useState<Socket | null>(null);
