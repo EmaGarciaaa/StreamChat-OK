@@ -1,6 +1,6 @@
 {
-  "name": "StreamSync",
-  "description": "Plataforma de comunicación de baja latencia con sincronización de mensajes para producciones en vivo.",
+  "name": "",
+  "description": "",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

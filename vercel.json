@@ -3,11 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.ts"
-    },
-    {
-      "source": "/((?!api|assets|favicon.ico).*)",
-      "destination": "/index.html"
+      "destination": "https://streamchat-production.up.railway.app/api/$1"
     }
   ]
 }

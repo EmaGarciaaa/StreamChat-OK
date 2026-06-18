@@ -3,12 +3,8 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import cors from "cors";
 
 export const app = express();
-
-// Enable CORS for frontend hosting
-app.use(cors({ origin: "*" }));
 
 // State to track users in rooms
 const roomUsers = new Map<string, { id: string, role: string, room: string }[]>();

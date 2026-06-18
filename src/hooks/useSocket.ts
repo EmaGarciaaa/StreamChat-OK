@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { MessagePayload, AlertPayload, QuickAction } from "../types";
-import { getBackendUrl } from "../utils/config";
 
-const SOCKET_SERVER_URL = getBackendUrl();
+const SOCKET_SERVER_URL = window.location.origin;
 
 export function useSocket(room: string, role: string, soundEnabled: boolean = false, token: string = "") {
   const [socket, setSocket] = useState<Socket | null>(null);
