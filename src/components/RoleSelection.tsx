@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Role, ROLE_COLORS, ROLE_HOVER_BG, ROLE_BORDER_COLORS } from "../types";
 import { Button } from "@/components/ui/button";
 import { Users, LayoutDashboard } from "lucide-react";
+import { getBackendUrl } from "../utils/config";
+
+const API_BASE_URL = getBackendUrl();
 
 interface RoleSelectionProps {
   onSelectRole: (role: Role) => void;
@@ -18,7 +21,7 @@ export function RoleSelection({ onSelectRole, roomName, language, setLanguage, t
   useEffect(() => {
     const fetchOccupiedRoles = async () => {
       try {
-        const res = await fetch(`/api/room/${roomName}/roles`);
+        const res = await fetch(`${API_BASE_URL}/api/room/${roomName}/roles`);
         const data = await res.json();
         setOccupiedRoles(data.occupiedRoles);
       } catch (err) {

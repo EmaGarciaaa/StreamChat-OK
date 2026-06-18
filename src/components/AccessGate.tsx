@@ -1,6 +1,9 @@
 import { useState, FormEvent } from "react";
 import { Plus, LogIn, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getBackendUrl } from "../utils/config";
+
+const API_BASE_URL = getBackendUrl();
 
 interface AccessGateProps {
   onSuccess: (room: string, token: string) => void;
@@ -19,7 +22,7 @@ export function AccessGate({ onSuccess, t }: AccessGateProps) {
     setIsProcessing(true);
     setError(null);
     try {
-      const res = await fetch("/api/room/create", { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/api/room/create`, { method: "POST" });
       const data = await res.json();
       setCreatedRoomInfo({ roomId: data.roomId, pin: data.pin });
       
@@ -40,7 +43,7 @@ export function AccessGate({ onSuccess, t }: AccessGateProps) {
     setError(null);
     
     try {
-      const res = await fetch(`/api/room/${roomName}/verify-pin`, {
+      const res = await fetch(`${API_BASE_URL}/api/room/${roomName}/verify-pin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin })
