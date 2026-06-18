@@ -4,8 +4,57 @@ import { createServer as createViteServer } from "vite";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+export const app = express();
+
+// State to track users in rooms
+const roomUsers = new Map<string, { id: string, role: string, room: string }[]>();
+const roomSettings = new Map<string, any[]>();
+const roomPins = new Map<string, string>();
+const roomTokens = new Map<string, Set<string>>(); // RoomID -> Set of valid session tokens
+const roomMessages = new Map<string, any[]>();
+const roomAlerts = new Map<string, any>();
+
+// API route to get occupied roles for a specific room
+app.get("/api/room/:roomId/roles", (req, res) => {
+  const roomId = req.params.roomId;
+  const users = roomUsers.get(roomId) || [];
+  const occupiedRoles = users.map(u => u.role);
+  res.json({ occupiedRoles });
+});
+
+// API route to create a room
+app.post("/api/room/create", express.json(), (req, res) => {
+  const roomId = Math.random().toString(36).substring(2, 10);
+  const pin = Math.floor(1000 + Math.random() * 9000).toString();
+  roomPins.set(roomId, pin);
+  const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
+  if (!roomTokens.has(roomId)) roomTokens.set(roomId, new Set());
+  roomTokens.get(roomId)!.add(token);
+  roomMessages.set(roomId, []); // init history
+  res.json({ roomId, pin, token });
+});
+
+// API route to verify room PIN
+app.post("/api/room/:roomId/verify-pin", express.json(), (req, res) => {
+  const roomId = req.params.roomId;
+  const { pin } = req.body;
+  
+  if (!roomPins.has(roomId)) {
+    res.status(404).json({ success: false, error: "Sala no encontrada" });
+    return;
+  }
+  
+  if (pin === roomPins.get(roomId)) {
+    const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    if (!roomTokens.has(roomId)) roomTokens.set(roomId, new Set());
+    roomTokens.get(roomId)!.add(token);
+    res.json({ success: true, token });
+  } else {
+    res.status(401).json({ success: false, error: "PIN incorrecto" });
+  }
+});
+
 async function startServer() {
-  const app = express();
   const PORT = 3000;
 
   const httpServer = createServer(app);
@@ -13,54 +62,6 @@ async function startServer() {
   // Initialize WebSockets for real-time low-latency communication
   const io = new Server(httpServer, {
     cors: { origin: "*" },
-  });
-
-  // State to track users in rooms
-  const roomUsers = new Map<string, { id: string, role: string, room: string }[]>();
-  const roomSettings = new Map<string, any[]>();
-  const roomPins = new Map<string, string>();
-  const roomTokens = new Map<string, Set<string>>(); // RoomID -> Set of valid session tokens
-  const roomMessages = new Map<string, any[]>();
-  const roomAlerts = new Map<string, any>();
-
-  // API route to get occupied roles for a specific room
-  app.get("/api/room/:roomId/roles", (req, res) => {
-    const roomId = req.params.roomId;
-    const users = roomUsers.get(roomId) || [];
-    const occupiedRoles = users.map(u => u.role);
-    res.json({ occupiedRoles });
-  });
-
-  // API route to create a room
-  app.post("/api/room/create", express.json(), (req, res) => {
-    const roomId = Math.random().toString(36).substring(2, 10);
-    const pin = Math.floor(1000 + Math.random() * 9000).toString();
-    roomPins.set(roomId, pin);
-    const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    if (!roomTokens.has(roomId)) roomTokens.set(roomId, new Set());
-    roomTokens.get(roomId)!.add(token);
-    roomMessages.set(roomId, []); // init history
-    res.json({ roomId, pin, token });
-  });
-
-  // API route to verify room PIN
-  app.post("/api/room/:roomId/verify-pin", express.json(), (req, res) => {
-    const roomId = req.params.roomId;
-    const { pin } = req.body;
-    
-    if (!roomPins.has(roomId)) {
-      res.status(404).json({ success: false, error: "Sala no encontrada" });
-      return;
-    }
-    
-    if (pin === roomPins.get(roomId)) {
-      const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-      if (!roomTokens.has(roomId)) roomTokens.set(roomId, new Set());
-      roomTokens.get(roomId)!.add(token);
-      res.json({ success: true, token });
-    } else {
-      res.status(401).json({ success: false, error: "PIN incorrecto" });
-    }
   });
 
   // Handle Socket.io connections
