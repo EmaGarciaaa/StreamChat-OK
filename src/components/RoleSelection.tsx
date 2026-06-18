@@ -3,6 +3,8 @@ import { Role, ROLE_COLORS, ROLE_HOVER_BG, ROLE_BORDER_COLORS } from "../types";
 import { Button } from "@/components/ui/button";
 import { Users, LayoutDashboard } from "lucide-react";
 
+const API_BASE_URL = (typeof process !== "undefined" && (process as any).env?.NEXT_PUBLIC_API_URL) || "https://streamchat-production.up.railway.app";
+
 interface RoleSelectionProps {
   onSelectRole: (role: Role) => void;
   roomName: string;
@@ -18,7 +20,7 @@ export function RoleSelection({ onSelectRole, roomName, language, setLanguage, t
   useEffect(() => {
     const fetchOccupiedRoles = async () => {
       try {
-        const res = await fetch(`/api/room/${roomName}/roles`);
+        const res = await fetch(`${API_BASE_URL}/api/room/${roomName}/roles`);
         const data = await res.json();
         setOccupiedRoles(data.occupiedRoles);
       } catch (err) {
